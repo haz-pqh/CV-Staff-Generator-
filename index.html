@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Modern CV Generator</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Google Fonts (Plus Jakarta Sans & Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- html2pdf.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    * {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    }
+
+    /* Ambient Glowing Background Animations */
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1) translate(0px, 0px); opacity: 0.4; }
+      50% { transform: scale(1.15) translate(20px, -20px); opacity: 0.7; }
+    }
+
+    .ambient-blob-1 { animation: pulseGlow 12s ease-in-out infinite alternate; }
+    .ambient-blob-2 { animation: pulseGlow 15s ease-in-out infinite alternate-reverse; }
+
+    /* Keyframe Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideDownFade {
+      from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .animate-fade-in-up { animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-slide-down { animation: slideDownFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-scale-in { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-shake { animation: shake 0.4s ease-in-out; }
+
+    .hover-lift {
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px -5px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Premium Ultra-Sleek Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 9999px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(148, 163, 184, 0.6) 0%, rgba(100, 116, 139, 0.7) 100%);
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.25s ease-in-out;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #6366f1 0%, #3b82f6 100%);
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+      background: linear-gradient(180deg, #4f46e5 0%, #2563eb 100%);
+    }
+
+    ::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+
+    /* Firefox Custom Scrollbar Support */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #64748b transparent;
+    }
+
+    /* Custom Container Scrollbars */
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(100, 116, 139, 0.6) transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.03);
+      border-radius: 9999px;
+      margin: 6px 0;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.5);
+      border-radius: 9999px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #6366f1 0%, #3b82f6 100%);
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+    }
+
+    /* Hide scrollbar completely for login view container */
+    #login-view, .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+    #login-view::-webkit-scrollbar, .no-scrollbar::-webkit-scrollbar {
+      display: none; /* Chrome, Safari and Opera */
+    }
+
+    .canvas-dot-grid {
+      background-color: #f8fafc;
+      background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+      background-size: 18px 18px;
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-header {
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    /* --- CV PAPER STYLES TO MATCH IMAGE REFERENCE --- */
+    .cv-paper {
+      width: 100%;
+      max-width: 210mm;
+      min-height: 297mm;
+      background: #ffffff;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.12), 0 0 1px 1px rgba(0, 0, 0, 0.05);
+      position: relative;
+      color: #334155;
+      overflow: hidden;
+    }
+
+    /* Timeline Vertical Connector Line */
+    .timeline-container {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 26px;
+      bottom: 10px;
+      width: 2px;
+      background-color: #cbd5e1;
+    }
+
+    .timeline-node {
+      position: relative;
+    }
+
+    .timeline-node::before {
+      content: '';
+      position: absolute;
+      left: -22px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      border: 2px solid var(--theme-color, #2c3e50);
+      z-index: 2;
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @media print {
+      html, body { 
+        background-color: #ffffff !important; 
+        padding: 0 !important; 
+        margin: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+      .no-print { display: none !important; }
+      .cv-paper { 
+        box-shadow: none !important; 
+        width: 100% !important; 
+        min-height: auto !important; 
+        margin: 0 !important; 
+        border-radius: 0 !important; 
+      }
+      .page-break-avoid { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body class="bg-slate-900 min-h-screen text-slate-800 flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+  <div id="intro-welcome-view" class="fixed inset-0 z-[250] bg-slate-950 flex items-center justify-center p-4 sm:p-6 overflow-hidden transition-opacity duration-500">
+    <canvas id="introParticlesCanvas" class="absolute inset-0 w-full h-full pointer-events-auto z-0"></canvas>
+    
+    <div class="relative z-10 glass-card w-full max-w-md p-6 sm:p-8 rounded-3xl border border-indigo-500/30 shadow-2xl text-center animate-scale-in">
+      <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+
+      <div class="w-16 h-16 bg-gradient-to-tr from-blue-600 via-indigo-600 to-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/30 ring-4 ring-indigo-500/20">
+        <i class="fa-solid fa-id-card text-2xl text-white"></i>
+      </div>
+
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[10px] font-mono font-bold uppercase tracking-widest mb-3">
+        <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span> Enterprise Portal v3.0
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">
+        Modern Staff CV Workspace
+      </h1>
+      <p class="text-xs text-slate-400 font-medium mb-6">
+        Generate professional two-column timeline CVs with real-time editing & high-res PDF exports.
+      </p>
+
+      <div class="space-y-2 mb-6 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 text-left">
+        <div class="flex justify-between items-center text-[10px] font-mono text-slate-400 mb-1">
+          <span id="introStepText" class="flex items-center gap-1.5"><i class="fa-solid fa-spinner animate-spin text-indigo-400"></i> Initializing template engine...</span>
+          <span id="introStepPercent" class="text-indigo-400 font-bold">0%</span>
+        </div>
+        <div class="w-full bg-slate-800/90 rounded-full h-1.5 overflow-hidden p-0.5 border border-slate-700/50">
+          <div id="introProgressBar" class="bg-gradient-to-r from-blue-500 via-indigo-500 to-slate-600 h-full rounded-full transition-all duration-300 w-0"></div>
+        </div>
+      </div>
+
+      <button id="enterPortalBtn" onclick="proceedToLogin()" class="w-full py-3 bg-gradient-to-r from-blue-600 via-slate-700 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/30 active:scale-95 transition-all flex items-center justify-center gap-2 group">
+        <span>Enter Staff Portal</span>
+        <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="login-view" class="fixed inset-0 z-[100] bg-slate-950 flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+    <div class="absolute -top-32 -left-32 w-80 h-80 bg-indigo-600/30 rounded-full blur-[120px] pointer-events-none ambient-blob-1"></div>
+    <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-slate-600/30 rounded-full blur-[120px] pointer-events-none ambient-blob-2"></div>
+
+    <div class="glass-card w-full max-w-sm my-auto rounded-2xl shadow-2xl border border-slate-800 overflow-hidden relative z-10 animate-fade-in-up hover-lift max-h-[98vh] overflow-y-auto no-scrollbar">
+      <div class="h-1 w-full bg-gradient-to-r from-slate-700 via-blue-600 to-indigo-600"></div>
+
+      <div class="p-4 sm:p-5 pb-1 text-center">
+        <div class="w-10 h-10 bg-gradient-to-tr from-slate-800 via-slate-700 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-md text-white">
+          <i class="fa-solid fa-user-gear text-base"></i>
+        </div>
+        <h2 class="text-lg font-extrabold text-white tracking-tight">Staff Portal Login</h2>
+        <p class="text-[10px] text-slate-400 mt-0.5 font-medium">Select your profile and enter your password</p>
+      </div>
+
+      <form onsubmit="handleLogin(event)" class="p-4 sm:p-5 pt-2 space-y-3">
+        <!-- Quick Staff Drawer -->
+        <div class="relative">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[9px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-users text-[10px] text-indigo-400"></i> Preset Profiles
+            </span>
+            <span class="text-[9px] text-slate-500 font-mono">3 Available</span>
+          </div>
+
+          <button type="button" id="staffDrawerTrigger" onclick="toggleStaffDrawer()" class="w-full p-2 rounded-xl bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-indigo-500/50 text-left transition-all flex items-center justify-between group shadow-inner">
+            <div class="flex items-center gap-2 min-w-0">
+              <div id="selectedDrawerAvatar" class="w-6 h-6 rounded-lg bg-slate-700 text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-user text-[10px]"></i>
+              </div>
+              <div class="min-w-0">
+                <div id="selectedDrawerName" class="text-[11px] font-bold text-slate-200 truncate">Muhammad Hazril</div>
+                <div id="selectedDrawerRole" class="text-[8px] text-slate-400 truncate">IT Student & Web Developer</div>
+              </div>
+            </div>
+            <i id="staffDrawerChevron" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform duration-300 mr-1"></i>
+          </button>
+
+          <!-- Drawer Menu Items -->
+          <div id="staffDrawerMenu" class="hidden absolute top-full left-0 right-0 mt-1.5 z-30 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl overflow-hidden divide-y divide-slate-800/60 animate-slide-down">
+            <!-- Preset 1: Hazril Hassan -->
+            <button type="button" onclick="selectStaffPresetDrawer('hazril.hassan@enterprise.com', 'Muhammad Hazril Bin Hassan', 'IT Student', 'MH', 'from-slate-700 to-blue-800')" class="w-full p-2 hover:bg-slate-900 text-left transition-all flex items-center justify-between group">
+              <div class="flex items-center gap-2 min-w-0">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-slate-700 to-blue-800 text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0">MH</div>
+                <div class="min-w-0">
+                  <div class="text-[11px] font-bold text-slate-100 truncate">Muhammad Hazril Bin Hassan</div>
+                  <div class="text-[9px] text-slate-400 truncate">IT Student / Web Developer</div>
+                </div>
+              </div>
+              <span class="text-[8px] font-mono font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-1.5 py-0.5 rounded-md">UPTM-2024</span>
+            </button>
+
+            <!-- Preset 2: Jane Doe -->
+            <button type="button" onclick="selectStaffPresetDrawer('jane.doe@enterprise.com', 'Jane Doe', 'Senior Systems Admin', 'JD', 'from-blue-600 to-indigo-700')" class="w-full p-2 hover:bg-slate-900 text-left transition-all flex items-center justify-between group">
+              <div class="flex items-center gap-2 min-w-0">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-700 text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0">JD</div>
+                <div class="min-w-0">
+                  <div class="text-[11px] font-bold text-slate-100 truncate">Jane Doe</div>
+                  <div class="text-[9px] text-slate-400 truncate">Senior Systems Administrator</div>
+                </div>
+              </div>
+              <span class="text-[8px] font-mono font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.5 rounded-md">STF-1042</span>
+            </button>
+
+            <!-- Preset 3: Sarah Chen -->
+            <button type="button" onclick="selectStaffPresetDrawer('sarah.chen@enterprise.com', 'Sarah Chen', 'UX/UI Lead Designer', 'SC', 'from-purple-600 to-pink-600')" class="w-full p-2 hover:bg-slate-900 text-left transition-all flex items-center justify-between group">
+              <div class="flex items-center gap-2 min-w-0">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-purple-600 to-pink-600 text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0">SC</div>
+                <div class="min-w-0">
+                  <div class="text-[11px] font-bold text-slate-100 truncate">Sarah Chen</div>
+                  <div class="text-[9px] text-slate-400 truncate">UX/UI Lead Designer</div>
+                </div>
+              </div>
+              <span class="text-[8px] font-mono font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 py-0.5 rounded-md">STF-3015</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="relative flex py-0.5 items-center">
+          <div class="flex-grow border-t border-slate-800"></div>
+          <span class="flex-shrink mx-2 text-[8px] text-slate-500 font-semibold uppercase tracking-wider">Or Credentials</span>
+          <div class="flex-grow border-t border-slate-800"></div>
+        </div>
+
+        <div class="space-y-2">
+          <div>
+            <label class="block text-[10px] font-semibold text-slate-300 mb-0.5">Staff Email or ID</label>
+            <div class="relative">
+              <i class="fa-solid fa-envelope absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-[10px]"></i>
+              <input type="text" id="loginEmailInput" required value="hazril.hassan@enterprise.com" placeholder="hazril.hassan@enterprise.com" class="w-full pl-7 pr-2.5 py-1.5 bg-slate-900 text-white text-[11px] border border-slate-800 rounded-lg focus:border-indigo-500 outline-none transition-all" />
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-0.5">
+              <label class="block text-[10px] font-semibold text-slate-300">Password</label>
+              <span id="passwordHint" class="text-[9px] text-amber-400 font-mono font-medium flex items-center gap-1">
+                <i class="fa-solid fa-shield-halved text-[9px]"></i> Password required
+              </span>
+            </div>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-[10px]"></i>
+              <input type="password" id="loginPasswordInput" required value="" placeholder="Enter your password" class="w-full pl-7 pr-2.5 py-1.5 bg-slate-900 text-white text-[11px] border border-slate-800 rounded-lg focus:border-indigo-500 outline-none transition-all" />
+            </div>
+          </div>
+        </div>
+
+        <div id="loginErrorMessage" class="hidden p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[10px] font-semibold flex items-center gap-1.5 animate-slide-down">
+          <i class="fa-solid fa-circle-exclamation text-rose-400"></i>
+          <span id="loginErrorText">Incorrect password. Please try again.</span>
+        </div>
+
+        <button type="submit" class="w-full py-2 bg-gradient-to-r from-slate-800 via-slate-700 to-indigo-600 hover:from-slate-700 hover:to-indigo-500 text-white font-bold text-[11px] rounded-lg shadow-md transition-all flex items-center justify-center gap-1.5 group mt-1">
+          <i class="fa-solid fa-right-to-bracket text-[10px] group-hover:translate-x-1 transition-transform"></i> Sign In to Staff Workspace
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="app-view" class="hidden min-h-screen flex flex-col bg-slate-100 animate-fade-in-up">
+    
+    <!-- Top Navigation Header -->
+    <header class="glass-header text-white sticky top-0 z-50 border-b border-slate-800 no-print">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
+        
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-white border border-slate-700 shadow-md">
+            <i class="fa-solid fa-file-user text-lg"></i>
+          </div>
+          <div>
+            <h1 class="font-extrabold text-base sm:text-lg leading-tight text-white flex items-center gap-2">
+              Staff CV Generator
+              <span class="text-[10px] font-mono font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full">2-COLUMN TIMELINE</span>
+            </h1>
+            <p class="text-[11px] text-slate-400">Matching official Malaysian enterprise format</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="hidden sm:flex items-center gap-2.5 bg-slate-900 border border-slate-800 px-3.5 py-1.5 rounded-full shadow-inner">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <span id="activeUserBadge" class="text-xs font-bold text-slate-200">Muhammad Hazril</span>
+            <span id="activeUserId" class="text-[10px] font-mono font-semibold bg-slate-800 text-blue-300 border border-slate-700 px-2 py-0.5 rounded-md">UPTM-2024</span>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="loadHazrilDemo()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> <span class="hidden md:inline">Preset Demo</span>
+            </button>
+            <button onclick="resetForm()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-rotate-right"></i> <span class="hidden md:inline">Reset</span>
+            </button>
+            <button onclick="printCV()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition shadow-md flex items-center gap-1.5">
+              <i class="fa-solid fa-print"></i> Print
+            </button>
+            <button onclick="downloadPDF()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-xs font-bold rounded-lg transition shadow-md flex items-center gap-1.5">
+              <i class="fa-solid fa-download"></i> Download PDF
+            </button>
+            <button onclick="logoutStaff()" title="Sign Out" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-semibold rounded-lg border border-rose-500/30 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-power-off text-rose-400"></i> Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Mobile View Switcher -->
+      <div class="lg:hidden col-span-1 flex bg-slate-200 p-1 rounded-xl mb-1">
+        <button id="tab-editor-btn" onclick="switchMobileTab('editor')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-slate-800 text-white shadow-sm transition-all duration-200 hover:bg-slate-700 cursor-pointer">Form Editor</button>
+        <button id="tab-preview-btn" onclick="switchMobileTab('preview')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-300/50 transition-all duration-200 cursor-pointer">Live CV Preview</button>
+      </div>
+
+      <!-- LEFT COLUMN: Form Controls Sidebar -->
+      <div id="editor-panel" class="lg:col-span-5 space-y-4 overflow-y-auto max-h-[calc(100vh-100px)] pr-1 custom-scrollbar">
+        
+        <!-- Accent Theme Colors -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-palette text-slate-600"></i> Banner Theme Accent
+            </label>
+            <span id="colorHexCode" class="text-xs font-mono font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">#2c3e50</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <input type="color" id="accentColorInput" value="#2c3e50" onchange="updateThemeColor(this.value)" class="w-10 h-10 rounded-xl cursor-pointer border-0 p-0 shadow-sm" />
+            <div class="flex gap-2">
+              <button type="button" onclick="updateThemeColor('#2c3e50')" class="w-7 h-7 rounded-full bg-[#2c3e50] ring-2 ring-offset-1 ring-transparent hover:scale-105 transition" title="Dark Slate Blue"></button>
+              <button type="button" onclick="updateThemeColor('#1e293b')" class="w-7 h-7 rounded-full bg-slate-900 ring-2 ring-offset-1 ring-transparent hover:scale-105 transition" title="Midnight Slate"></button>
+              <button type="button" onclick="updateThemeColor('#1e3a8a')" class="w-7 h-7 rounded-full bg-blue-900 ring-2 ring-offset-1 ring-transparent hover:scale-105 transition" title="Navy Blue"></button>
+              <button type="button" onclick="updateThemeColor('#064e3b')" class="w-7 h-7 rounded-full bg-emerald-900 ring-2 ring-offset-1 ring-transparent hover:scale-105 transition" title="Deep Forest"></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Photo Upload -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
+          <label class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+            <i class="fa-solid fa-camera text-slate-600"></i> Profile Photo
+          </label>
+          <div class="flex items-center gap-4">
+            <div class="relative w-16 h-16 rounded-full overflow-hidden bg-slate-100 border-2 border-slate-200 flex items-center justify-center flex-shrink-0">
+              <img id="formPhotoPreview" src="" alt="Profile preview" class="w-full h-full object-cover hidden" />
+              <i id="formPhotoPlaceholder" class="fa-solid fa-user text-slate-400 text-xl"></i>
+            </div>
+            <div class="space-y-1.5 flex-1">
+              <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)" class="hidden" />
+              <div class="flex gap-2">
+                <button type="button" onclick="document.getElementById('photoInput').click()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition">
+                  <i class="fa-solid fa-upload mr-1"></i> Upload Photo
+                </button>
+                <button type="button" id="removePhotoButton" onclick="removePhoto()" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold rounded-lg border border-rose-200 transition hidden">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+              <p class="text-[10px] text-slate-400">JPG or PNG. Auto-scaled for CV sheet header.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Information -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
+          <label class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+            <i class="fa-solid fa-id-card text-slate-600"></i> Personal Details
+          </label>
+
+          <div class="space-y-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Full Name</label>
+              <input type="text" id="fullNameInput" placeholder="e.g. MUHAMMAD HAZRIL BIN HASSAN" oninput="updateLiveCV()" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:bg-white focus:border-indigo-500 outline-none transition" />
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Job / Staff Title</label>
+              <input type="text" id="jobTitleInput" placeholder="e.g. IT STUDENT" oninput="updateLiveCV()" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:bg-white focus:border-indigo-500 outline-none transition" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Phone</label>
+                <input type="text" id="phoneInput" placeholder="+6017-906 9607" oninput="updateLiveCV()" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:bg-white focus:border-indigo-500 outline-none transition" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Email</label>
+                <input type="email" id="emailInput" placeholder="hassanhazril@gmail.com" oninput="updateLiveCV()" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:bg-white focus:border-indigo-500 outline-none transition" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Location / Address</label>
+              <input type="text" id="locationInput" placeholder="Ampang, Selangor" oninput="updateLiveCV()" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:bg-white focus:border-indigo-500 outline-none transition" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Summary -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 space-y-2">
+          <label class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+            <i class="fa-solid fa-align-left text-slate-600"></i> Profile Summary
+          </label>
+          <textarea id="summaryInput" rows="4" placeholder="Enter professional profile summary..." oninput="updateLiveCV()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:bg-white focus:border-indigo-500 outline-none transition custom-scrollbar"></textarea>
+        </div>
+
+        <!-- Skills & Languages -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
+          <div>
+            <label class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 mb-1.5">
+              <i class="fa-solid fa-gears text-slate-600"></i> Key Skills (One per line or comma-separated)
+            </label>
+            <textarea id="skillsInput" rows="3" placeholder="Problem-Solving & Critical Thinking&#10;Web Development&#10;UI/UX Design" oninput="updateLiveCV()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:bg-white focus:border-indigo-500 outline-none transition custom-scrollbar"></textarea>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 mb-1">
+              <i class="fa-solid fa-language text-slate-600"></i> Languages
+            </label>
+            <input type="text" id="languagesInput" placeholder="Malay, English" oninput="updateLiveCV()" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:bg-white focus:border-indigo-500 outline-none transition" />
+          </div>
+        </div>
+
+        <!-- Work Experience Controls -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-briefcase text-slate-600"></i> Work Experience
+            </label>
+            <button type="button" onclick="addExperienceField()" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold rounded-lg border border-indigo-200 transition flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> Add Job
+            </button>
+          </div>
+          <div id="experienceContainer" class="space-y-3"></div>
+        </div>
+
+        <!-- Education Controls -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-graduation-cap text-slate-600"></i> Education
+            </label>
+            <button type="button" onclick="addEducationField()" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold rounded-lg border border-indigo-200 transition flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> Add Education
+            </button>
+          </div>
+          <div id="educationContainer" class="space-y-3"></div>
+        </div>
+
+      </div>
+
+      <div id="preview-panel" class="lg:col-span-7 hidden lg:flex flex-col items-center overflow-y-auto max-h-[calc(100vh-100px)] custom-scrollbar canvas-dot-grid p-4 rounded-2xl border border-slate-200/80">
+        
+        <div class="w-full flex items-center justify-between mb-3 px-2 no-print">
+          <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-500">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Standard A4 Sheet Format (2-Column Timeline)
+          </div>
+          <div class="text-[10px] font-mono text-slate-500 bg-white px-2 py-0.5 rounded border shadow-sm">
+            Zoom 100%
+          </div>
+        </div>
+
+        <!-- PRINTABLE CV DOCUMENT SHEET -->
+        <div id="cv-preview-card" class="cv-paper flex flex-col text-slate-800">
+          
+          <!-- TOP HEADER BANNER AREA -->
+          <div class="relative w-full flex min-h-[150px]">
+            <!-- Left Column Header Area (Centers Photo in 33% Sidebar Width) -->
+            <div class="w-[33%] bg-[#e2e8f0] flex items-center justify-center p-4 flex-shrink-0 relative">
+              <div class="w-32 h-32 sm:w-36 sm:h-36 rounded-full border-4 border-white bg-slate-200 shadow-md overflow-hidden flex items-center justify-center z-10">
+                <img id="preview-photo" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300" alt="Profile" class="w-full h-full object-cover" />
+                <i id="preview-photo-icon" class="fa-solid fa-user text-4xl text-slate-400 hidden"></i>
+              </div>
+            </div>
+
+            <!-- Main Right Dark Banner -->
+            <div id="preview-header-banner" class="w-[67%] bg-[#2c3e50] text-white p-6 pl-8 flex flex-col justify-center">
+              <h1 id="preview-name" class="text-2xl sm:text-3xl font-extrabold uppercase tracking-wide leading-tight text-white">
+                MUHAMMAD HAZRIL<br/>BIN HASSAN
+              </h1>
+              <p id="preview-title" class="text-xs sm:text-sm font-medium tracking-widest uppercase text-slate-300 mt-1">
+                IT STUDENT
+              </p>
+            </div>
+          </div>
+
+          <!-- MAIN TWO COLUMN BODY -->
+          <div class="flex-1 flex w-full">
+            
+            <!-- LEFT COLUMN (33% Width - Sidebar Light Gray) -->
+            <div class="w-[33%] bg-[#e2e8f0] p-6 pt-4 border-r border-slate-300/60 flex flex-col space-y-6 flex-shrink-0 text-slate-800">
+              
+              <!-- Contact Section -->
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 pb-1 border-b-2 border-slate-800 mb-3">
+                  CONTACT
+                </h3>
+                <div class="space-y-2.5 text-[11px] font-medium text-slate-700">
+                  <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-phone text-slate-800 text-[11px] mt-0.5"></i>
+                    <span id="preview-phone">+6017-906 9607</span>
+                  </div>
+                  <div class="flex items-start gap-2.5 break-all">
+                    <i class="fa-solid fa-envelope text-slate-800 text-[11px] mt-0.5"></i>
+                    <span id="preview-email">hassanhazril@gmail.com</span>
+                  </div>
+                  <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-location-dot text-slate-800 text-[11px] mt-0.5"></i>
+                    <span id="preview-location">Taman Permai Jaya, Ampang, Selangor</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Skills Section -->
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 pb-1 border-b-2 border-slate-800 mb-3">
+                  SKILLS
+                </h3>
+                <ul id="preview-skills-list" class="space-y-1.5 text-[11px] font-medium text-slate-700 list-disc list-inside">
+                  <!-- Dynamic Skills -->
+                </ul>
+              </div>
+
+              <!-- Languages Section -->
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 pb-1 border-b-2 border-slate-800 mb-3">
+                  LANGUAGES
+                </h3>
+                <ul id="preview-languages-list" class="space-y-1.5 text-[11px] font-medium text-slate-700 list-disc list-inside">
+                  <!-- Dynamic Languages -->
+                </ul>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN (67% Width - White Timeline Content) -->
+            <div class="w-[67%] p-6 pl-8 pt-8 space-y-6 bg-white">
+              
+              <!-- PROFILE SECTION -->
+              <div class="timeline-container">
+                <div class="flex items-center gap-3 mb-2">
+                  <div class="w-7 h-7 rounded-full bg-[#2c3e50] text-white flex items-center justify-center text-xs flex-shrink-0 theme-badge">
+                    <i class="fa-solid fa-user"></i>
+                  </div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 flex-1 pb-0.5 border-b-2 border-slate-800">
+                    PROFILE
+                  </h3>
+                </div>
+                <p id="preview-summary" class="text-[11px] leading-relaxed text-slate-700 text-justify">
+                  Motivated and adaptable IT graduate with a Diploma in Computer Sciences and hands-on experience as a Web & Multimedia Developer Intern under FCOM faculty at University Poly-Tech Malaysia...
+                </p>
+              </div>
+
+              <!-- WORK EXPERIENCE SECTION -->
+              <div class="timeline-container">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-7 h-7 rounded-full bg-[#2c3e50] text-white flex items-center justify-center text-xs flex-shrink-0 theme-badge">
+                    <i class="fa-solid fa-briefcase"></i>
+                  </div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 flex-1 pb-0.5 border-b-2 border-slate-800">
+                    WORK EXPERIENCE
+                  </h3>
+                </div>
+
+                <div id="preview-experience-list" class="space-y-4">
+                  <!-- Dynamic Jobs -->
+                </div>
+              </div>
+
+              <!-- EDUCATION SECTION -->
+              <div class="timeline-container">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-7 h-7 rounded-full bg-[#2c3e50] text-white flex items-center justify-center text-xs flex-shrink-0 theme-badge">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                  </div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 flex-1 pb-0.5 border-b-2 border-slate-800">
+                    EDUCATION
+                  </h3>
+                </div>
+
+                <div id="preview-education-list" class="space-y-3.5">
+                  <!-- Dynamic Education -->
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    let currentThemeColor = '#2c3e50';
+    let currentPhotoUrl = '';
+    let experienceCount = 0;
+    let educationCount = 0;
+
+    // Helper functions for safe DOM access
+    function setVal(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.value = val !== undefined && val !== null ? val : '';
+    }
+
+    function getVal(id, fallback = '') {
+      const el = document.getElementById(id);
+      return el ? el.value : fallback;
+    }
+
+    // Default Profile Matching Reference Image (Muhammad Hazril Bin Hassan)
+    const defaultProfileHazril = {
+      staffId: 'UPTM-2024',
+      fullName: 'MUHAMMAD HAZRIL BIN HASSAN',
+      jobTitle: 'IT STUDENT',
+      photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',
+      email: 'hazril.hassan@enterprise.com',
+      phone: '+6017-906 9607',
+      location: 'Taman Permai Jaya, Ampang, Selangor',
+      themeColor: '#2c3e50',
+      skills: 'Problem-Solving & Critical Thinking\nCommunication & Team Collaboration\nTeamwork\nAdaptability & Quick Learning\nProgramming Languages\nFrameworks & Platforms\nWeb Development\nUI/UX Design\nTools & Software',
+      languages: 'Malay, English',
+      summary: 'Motivated and adaptable IT graduate with a Diploma in Computer Sciences and hands-on experience as a Web & Multimedia Developer Intern under FCOM faculty at University Poly-Tech Malaysia. Currently pursuing a Bachelor\'s Degree Information Technology (Honours) in Computer Application Development at University Poly-Tech Malaysia, on special leave and available for part-time or full-time employment for the next 4–5 months. Skilled in Adaptability & Quick Learning, with a strong work ethic, eager to gain new experience in a different position while contributing effectively in a professional environment.',
+      experiences: [
+        {
+          role: 'Internship — Web & Multimedia Developer',
+          company: 'Faculty of Computing and Multimedia (FCOM), Universiti Poly-Tech Malaysia (UPTM)',
+          dates: '2024',
+          description: 'Designed, developed, and deployed the official FCOM website, ensuring responsive and user-friendly design.\nCreated and optimized multimedia content including graphics, videos, and animations to enhance user engagement.\nCollaborated with faculty staff to gather requirements, implement feedback, and maintain site content.\nEnsured brand consistency across web pages and promotional materials.'
+        }
+      ],
+      education: [
+        {
+          degree: 'Bachelor of Information Technology (Honours) in Computer Application Development',
+          school: 'Universiti Poly-Tech Malaysia (UPTM)',
+          dates: '2024 - PRESENT',
+          gpa: ''
+        },
+        {
+          degree: 'Diploma in Computer Sciences',
+          school: 'Universiti Poly-Tech Malaysia (UPTM)',
+          dates: '2021 - 2024',
+          gpa: '3.5'
+        }
+      ]
+    };
+
+    // Additional Staff Profiles & Passwords for Authentication Security Rule
+    const staffDatabase = {
+      'hazril.hassan@enterprise.com': {
+        password: 'hazril123',
+        profile: defaultProfileHazril
+      },
+      'jane.doe@enterprise.com': {
+        password: 'jane123',
+        profile: {
+          staffId: 'STF-1042',
+          fullName: 'JANE DOE',
+          jobTitle: 'SENIOR SYSTEMS ADMINISTRATOR',
+          photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300',
+          email: 'jane.doe@enterprise.com',
+          phone: '+6012-345 6789',
+          location: 'Cyberjaya, Selangor',
+          themeColor: '#1e3a8a',
+          skills: 'Cloud Infrastructure & AWS\nLinux & Windows Server Admin\nNetwork Security & Firewalls\nDocker & Kubernetes\nIncident Management & Monitoring',
+          languages: 'English, Malay',
+          summary: 'Experienced Senior Systems Administrator with over 7 years managing enterprise cloud infrastructure, server automation, and cybersecurity protocols. Proven track record in uptime optimization and disaster recovery.',
+          experiences: [
+            {
+              role: 'Senior Systems Administrator',
+              company: 'Global Enterprise Solutions',
+              dates: '2021 - PRESENT',
+              description: 'Managed 200+ AWS virtual servers with 99.99% uptime.\nImplemented automated CI/CD pipelines and Kubernetes deployment clusters.\nLed security compliance audits and threat mitigation.'
+            }
+          ],
+          education: [
+            {
+              degree: 'Bachelor of Science in Cybersecurity',
+              school: 'Universiti Malaya',
+              dates: '2015 - 2018',
+              gpa: '3.8'
+            }
+          ]
+        }
+      },
+      'sarah.chen@enterprise.com': {
+        password: 'sarah123',
+        profile: {
+          staffId: 'STF-3015',
+          fullName: 'SARAH CHEN',
+          jobTitle: 'UX/UI LEAD DESIGNER',
+          photoUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=300',
+          email: 'sarah.chen@enterprise.com',
+          phone: '+6011-8888 9999',
+          location: 'Kuala Lumpur, Malaysia',
+          themeColor: '#064e3b',
+          skills: 'User Research & Persona Mapping\nFigma & Adobe XD Prototyping\nDesign Systems & Tokenization\nUsability Testing & Analytics\nHTML/CSS & Micro-Interactions',
+          languages: 'English, Mandarin, Malay',
+          summary: 'Creative Lead Designer with 6+ years specializing in user-centered digital product design. Passionate about creating sleek, accessible, and intuitive enterprise applications.',
+          experiences: [
+            {
+              role: 'Lead UX/UI Designer',
+              company: 'Nexus Creative Studio',
+              dates: '2020 - PRESENT',
+              description: 'Spearheaded design system unification across 12 mobile and web products.\nConducted 50+ user testing sessions improving conversion rate by 34%.\nMentored junior design team members.'
+            }
+          ],
+          education: [
+            {
+              degree: 'Bachelor of Design in Interactive Media',
+              school: 'Multimedia University (MMU)',
+              dates: '2016 - 2019',
+              gpa: '3.7'
+            }
+          ]
+        }
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initIntroWelcome();
+    });
+
+    function initIntroWelcome() {
+      const canvas = document.getElementById('introParticlesCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      let pct = 0;
+      const interval = setInterval(() => {
+        pct += 20;
+        if (pct >= 100) {
+          pct = 100;
+          clearInterval(interval);
+          const stepText = document.getElementById('introStepText');
+          if (stepText) stepText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Template Engine Ready`;
+        }
+        const bar = document.getElementById('introProgressBar');
+        if (bar) bar.style.width = pct + '%';
+        const percentEl = document.getElementById('introStepPercent');
+        if (percentEl) percentEl.innerText = pct + '%';
+      }, 120);
+    }
+
+    function proceedToLogin() {
+      const introView = document.getElementById('intro-welcome-view');
+      const loginView = document.getElementById('login-view');
+      if (introView) introView.classList.add('opacity-0');
+      setTimeout(() => {
+        if (introView) introView.classList.add('hidden');
+        if (loginView) loginView.classList.remove('hidden');
+      }, 300);
+    }
+
+    function toggleStaffDrawer() {
+      const menu = document.getElementById('staffDrawerMenu');
+      const chevron = document.getElementById('staffDrawerChevron');
+      if (menu) {
+        if (menu.classList.contains('hidden')) {
+          menu.classList.remove('hidden');
+          if (chevron) chevron.style.transform = 'rotate(180deg)';
+        } else {
+          menu.classList.add('hidden');
+          if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }
+      }
+    }
+
+    function selectStaffPresetDrawer(email, name, role, initials, bgGrad) {
+      setVal('loginEmailInput', email);
+      const selName = document.getElementById('selectedDrawerName');
+      if (selName) selName.innerText = name;
+      const selRole = document.getElementById('selectedDrawerRole');
+      if (selRole) selRole.innerText = role;
+      
+      // REQUIRE PASSWORD RULE: Always clear password field so staff must key in manually
+      setVal('loginPasswordInput', '');
+      const pwdInput = document.getElementById('loginPasswordInput');
+      if (pwdInput) pwdInput.focus();
+
+      const hint = document.getElementById('passwordHint');
+      if (hint) {
+        hint.innerHTML = `<span class="text-amber-400 font-medium flex items-center gap-1"><i class="fa-solid fa-lock text-[9px]"></i> Enter ${name.split(' ')[0]}'s password</span>`;
+      }
+
+      const errBox = document.getElementById('loginErrorMessage');
+      if (errBox) errBox.classList.add('hidden');
+
+      toggleStaffDrawer();
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = getVal('loginEmailInput').trim().toLowerCase();
+      const pwd = getVal('loginPasswordInput').trim();
+
+      const errBox = document.getElementById('loginErrorMessage');
+      const errText = document.getElementById('loginErrorText');
+
+      // 1. Password Empty Check
+      if (!pwd) {
+        if (errBox && errText) {
+          errText.innerText = 'Password is required to access staff data.';
+          errBox.classList.remove('hidden');
+          errBox.classList.add('animate-shake');
+          setTimeout(() => errBox.classList.remove('animate-shake'), 400);
+        }
+        return;
+      }
+
+      // 2. Validate Password against staff account
+      const staffRecord = staffDatabase[email];
+      const validPassword = staffRecord ? staffRecord.password : 'password123';
+
+      if (pwd !== validPassword) {
+        if (errBox && errText) {
+          errText.innerText = 'Access Denied: Incorrect password for selected staff profile.';
+          errBox.classList.remove('hidden');
+          errBox.classList.add('animate-shake');
+          setTimeout(() => errBox.classList.remove('animate-shake'), 400);
+        }
+        return;
+      }
+
+      // Hide error message if valid
+      if (errBox) errBox.classList.add('hidden');
+
+      const loginView = document.getElementById('login-view');
+      const appView = document.getElementById('app-view');
+      if (loginView) loginView.classList.add('hidden');
+      if (appView) appView.classList.remove('hidden');
+
+      // Load profile into CV Workspace
+      loadStaffProfileData(email);
+      showToast('Identity authenticated successfully', 'fa-shield-check', 'success');
+    }
+
+    function loadStaffProfileData(email) {
+      const record = staffDatabase[email];
+      const p = record ? record.profile : defaultProfileHazril;
+
+      // Update badge header
+      const userBadge = document.getElementById('activeUserBadge');
+      if (userBadge) userBadge.innerText = p.fullName.split(' ')[0] + ' ' + (p.fullName.split(' ')[1] || '');
+      const userIdBadge = document.getElementById('activeUserId');
+      if (userIdBadge) userIdBadge.innerText = p.staffId || 'STF-MAIN';
+
+      currentPhotoUrl = p.photoUrl;
+
+      setVal('fullNameInput', p.fullName);
+      setVal('jobTitleInput', p.jobTitle);
+      setVal('phoneInput', p.phone);
+      setVal('emailInput', p.email);
+      setVal('locationInput', p.location);
+      setVal('skillsInput', p.skills);
+      setVal('languagesInput', p.languages);
+      setVal('summaryInput', p.summary);
+
+      const expContainer = document.getElementById('experienceContainer');
+      if (expContainer) expContainer.innerHTML = '';
+      const eduContainer = document.getElementById('educationContainer');
+      if (eduContainer) eduContainer.innerHTML = '';
+
+      if (p.experiences) p.experiences.forEach(exp => addExperienceField(exp));
+      if (p.education) p.education.forEach(edu => addEducationField(edu));
+
+      updateThemeColor(p.themeColor || '#2c3e50');
+      updatePhotoPreview();
+      updateLiveCV();
+    }
+
+    function loadHazrilDemo() {
+      loadStaffProfileData('hazril.hassan@enterprise.com');
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const loginView = document.getElementById('login-view');
+      const appView = document.getElementById('app-view');
+      if (loginView) loginView.classList.add('hidden');
+      if (appView) appView.classList.remove('hidden');
+      loadHazrilDemo();
+      showToast('Authenticated into workspace', 'fa-right-to-bracket', 'success');
+    }
+
+    function loadHazrilDemo() {
+      const p = defaultProfileHazril;
+      currentPhotoUrl = p.photoUrl;
+
+      setVal('fullNameInput', p.fullName);
+      setVal('jobTitleInput', p.jobTitle);
+      setVal('phoneInput', p.phone);
+      setVal('emailInput', p.email);
+      setVal('locationInput', p.location);
+      setVal('skillsInput', p.skills);
+      setVal('languagesInput', p.languages);
+      setVal('summaryInput', p.summary);
+
+      const expContainer = document.getElementById('experienceContainer');
+      if (expContainer) expContainer.innerHTML = '';
+      const eduContainer = document.getElementById('educationContainer');
+      if (eduContainer) eduContainer.innerHTML = '';
+
+      p.experiences.forEach(exp => addExperienceField(exp));
+      p.education.forEach(edu => addEducationField(edu));
+
+      updateThemeColor(p.themeColor);
+      updatePhotoPreview();
+      updateLiveCV();
+    }
+
+    function updateThemeColor(hex) {
+      currentThemeColor = hex;
+      const hexText = document.getElementById('colorHexCode');
+      if (hexText) hexText.innerText = hex;
+      setVal('accentColorInput', hex);
+
+      const headerBanner = document.getElementById('preview-header-banner');
+      if (headerBanner) headerBanner.style.backgroundColor = hex;
+
+      const badges = document.querySelectorAll('.theme-badge');
+      badges.forEach(b => b.style.backgroundColor = hex);
+
+      document.documentElement.style.setProperty('--theme-color', hex);
+    }
+
+    function handlePhotoUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          currentPhotoUrl = evt.target.result;
+          updatePhotoPreview();
+          updateLiveCV();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removePhoto() {
+      currentPhotoUrl = '';
+      const photoInput = document.getElementById('photoInput');
+      if (photoInput) photoInput.value = '';
+      updatePhotoPreview();
+      updateLiveCV();
+    }
+
+    function updatePhotoPreview() {
+      const formPreview = document.getElementById('formPhotoPreview');
+      const formPlaceholder = document.getElementById('formPhotoPlaceholder');
+      const removeBtn = document.getElementById('removePhotoButton');
+      const previewImg = document.getElementById('preview-photo');
+      const previewIcon = document.getElementById('preview-photo-icon');
+
+      if (currentPhotoUrl) {
+        if (formPreview) { formPreview.src = currentPhotoUrl; formPreview.classList.remove('hidden'); }
+        if (formPlaceholder) formPlaceholder.classList.add('hidden');
+        if (removeBtn) removeBtn.classList.remove('hidden');
+
+        if (previewImg) { previewImg.src = currentPhotoUrl; previewImg.classList.remove('hidden'); }
+        if (previewIcon) previewIcon.classList.add('hidden');
+      } else {
+        if (formPreview) { formPreview.src = ''; formPreview.classList.add('hidden'); }
+        if (formPlaceholder) formPlaceholder.classList.remove('hidden');
+        if (removeBtn) removeBtn.classList.add('hidden');
+
+        if (previewImg) previewImg.classList.add('hidden');
+        if (previewIcon) previewIcon.classList.remove('hidden');
+      }
+    }
+
+    function updateLiveCV() {
+      const nameEl = document.getElementById('preview-name');
+      if (nameEl) nameEl.innerHTML = (getVal('fullNameInput', 'MUHAMMAD HAZRIL BIN HASSAN') || 'MUHAMMAD HAZRIL BIN HASSAN').replace(/\s+/g, ' ');
+
+      const titleEl = document.getElementById('preview-title');
+      if (titleEl) titleEl.innerText = getVal('jobTitleInput', 'IT STUDENT') || 'IT STUDENT';
+
+      const phoneEl = document.getElementById('preview-phone');
+      if (phoneEl) phoneEl.innerText = getVal('phoneInput', '+6017-906 9607') || '+6017-906 9607';
+
+      const emailEl = document.getElementById('preview-email');
+      if (emailEl) emailEl.innerText = getVal('emailInput', 'hassanhazril@gmail.com') || 'hassanhazril@gmail.com';
+
+      const locEl = document.getElementById('preview-location');
+      if (locEl) locEl.innerText = getVal('locationInput', 'Ampang, Selangor') || 'Ampang, Selangor';
+
+      const sumEl = document.getElementById('preview-summary');
+      if (sumEl) sumEl.innerText = getVal('summaryInput', 'Profile summary...') || 'Profile summary...';
+
+      // Render Skills Sidebar
+      const skillsList = document.getElementById('preview-skills-list');
+      if (skillsList) {
+        skillsList.innerHTML = '';
+        const rawSkills = getVal('skillsInput', '');
+        const skills = rawSkills.split(/\n|,/).map(s => s.trim()).filter(s => s.length > 0);
+        skills.forEach(skill => {
+          const li = document.createElement('li');
+          li.innerText = skill;
+          skillsList.appendChild(li);
+        });
+      }
+
+      // Render Languages Sidebar
+      const languagesList = document.getElementById('preview-languages-list');
+      if (languagesList) {
+        languagesList.innerHTML = '';
+        const rawLanguages = getVal('languagesInput', '');
+        const languages = rawLanguages.split(/\n|,/).map(l => l.trim()).filter(l => l.length > 0);
+        languages.forEach(lang => {
+          const li = document.createElement('li');
+          li.innerText = lang;
+          languagesList.appendChild(li);
+        });
+      }
+
+      renderExperienceList();
+      renderEducationList();
+    }
+
+    function addExperienceField(data = { role: '', company: '', dates: '', description: '' }) {
+      experienceCount++;
+      const id = `exp-${experienceCount}`;
+      const container = document.getElementById('experienceContainer');
+      if (!container) return;
+
+      const card = document.createElement('div');
+      card.id = id;
+      card.className = 'p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2 relative';
+      card.innerHTML = `
+        <button type="button" onclick="removeExperienceField('${id}')" class="absolute top-2 right-2 text-slate-400 hover:text-rose-500 text-xs">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+        <input type="text" placeholder="Job Title / Internship" value="${data.role || ''}" oninput="updateLiveCV()" class="exp-role w-full px-2.5 py-1 text-xs border border-slate-200 rounded-lg outline-none" />
+        <input type="text" placeholder="Faculty / Company / Institution" value="${data.company || ''}" oninput="updateLiveCV()" class="exp-company w-full px-2.5 py-1 text-xs border border-slate-200 rounded-lg outline-none" />
+        <input type="text" placeholder="Year / Date Range (e.g. 2024)" value="${data.dates || ''}" oninput="updateLiveCV()" class="exp-dates w-full px-2.5 py-1 text-xs border border-slate-200 rounded-lg outline-none" />
+        <textarea rows="3" placeholder="Key responsibilities (one per line)..." oninput="updateLiveCV()" class="exp-desc w-full px-2.5 py-1 text-xs border border-slate-200 rounded-lg outline-none custom-scrollbar">${data.description || ''}</textarea>
+      `;
+      container.appendChild(card);
+      updateLiveCV();
+    }
+
+    function removeExperienceField(id) {
+      document.getElementById(id)?.remove();
+      updateLiveCV();
+    }
+
+    function renderExperienceList() {
+      const list = document.getElementById('preview-experience-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      const roles = document.querySelectorAll('.exp-role');
+      const companies = document.querySelectorAll('.exp-company');
+      const dates = document.querySelectorAll('.exp-dates');
+      const descriptions = document.querySelectorAll('.exp-desc');
+
+      roles.forEach((_, idx) => {
+        const role = roles[idx]?.value || '';
+        const company = companies[idx]?.value || '';
+        const date = dates[idx]?.value || '';
+        const descRaw = descriptions[idx]?.value || '';
+
+        if (role || company) {
+          const item = document.createElement('div');
+          item.className = 'timeline-node space-y-1';
+          
+          let bulletsHtml = '';
+          const bulletLines = descRaw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+          if (bulletLines.length > 0) {
+            bulletsHtml = `<ul class="list-disc list-inside text-[10.5px] text-slate-700 space-y-0.5 mt-1.5 pl-0.5">
+              ${bulletLines.map(line => `<li>${line}</li>`).join('')}
+            </ul>`;
+          }
+
+          item.innerHTML = `
+            <div class="flex justify-between items-baseline gap-2">
+              <span class="font-bold text-xs text-slate-900">${role}</span>
+              <span class="text-[10px] font-medium text-slate-500">${date}</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-600">${company}</div>
+            ${bulletsHtml}
+          `;
+          list.appendChild(item);
+        }
+      });
+    }
+
+    function addEducationField(data = { degree: '', school: '', dates: '', gpa: '' }) {
+      educationCount++;
+      const id = `edu-${educationCount}`;
+      const container = document.getElementById('educationContainer');
+      if (!container) return;
+
+      const card = document.createElement('div');
+      card.id = id;
+      card.className = 'p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2 relative';
+      card.innerHTML = `
+        <button type="button" onclick="removeEducationField('${id}')" class="absolute top-2 right-2 text-slate-400 hover:text-rose-500 text-xs">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+        <input type="text" placeholder="Degree / Diploma Title" value="${data.degree || ''}" oninput="updateLiveCV()" class="edu-degree w-full px-2.5 py-1 text-xs border border-slate-200 rounded-lg outline-none" />
+        <input type="text" placeholder="University / School Name" value="${data.school || ''}" oninput="updateLiveCV()" class="edu-school w-full px-2.5 py-1 text-xs border border-slate-200 rounded-lg outline-none" />
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" placeholder="Dates (e.g. 2021 - 2024)" value="${data.dates || ''}" oninput="updateLiveCV()" class="edu-dates w-full px-2.5 py-1 text-xs border border-slate-200 rounded-lg outline-none" />
+          <input type="text" placeholder="GPA (e.g. 3.5)" value="${data.gpa || ''}" oninput="updateLiveCV()" class="edu-gpa w-full px-2.5 py-1 text-xs border border-slate-200 rounded-lg outline-none" />
+        </div>
+      `;
+      container.appendChild(card);
+      updateLiveCV();
+    }
+
+    function removeEducationField(id) {
+      document.getElementById(id)?.remove();
+      updateLiveCV();
+    }
+
+    function renderEducationList() {
+      const list = document.getElementById('preview-education-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      const degrees = document.querySelectorAll('.edu-degree');
+      const schools = document.querySelectorAll('.edu-school');
+      const dates = document.querySelectorAll('.edu-dates');
+      const gpas = document.querySelectorAll('.edu-gpa');
+
+      degrees.forEach((_, idx) => {
+        const degree = degrees[idx]?.value || '';
+        const school = schools[idx]?.value || '';
+        const date = dates[idx]?.value || '';
+        const gpa = gpas[idx]?.value || '';
+
+        if (degree || school) {
+          const item = document.createElement('div');
+          item.className = 'timeline-node space-y-0.5';
+          item.innerHTML = `
+            <div class="flex justify-between items-baseline gap-2">
+              <span class="font-bold text-xs text-slate-900">${degree}</span>
+              <span class="text-[10px] font-medium text-slate-500">${date}</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-600">${school}</div>
+            ${gpa ? `<div class="text-[10.5px] font-semibold text-slate-700">GPA : ${gpa}</div>` : ''}
+          `;
+          list.appendChild(item);
+        }
+      });
+    }
+
+    function resetForm() {
+      setVal('skillsInput', '');
+      setVal('languagesInput', '');
+      setVal('summaryInput', '');
+      setVal('fullNameInput', '');
+      setVal('jobTitleInput', '');
+      setVal('phoneInput', '');
+      setVal('emailInput', '');
+      setVal('locationInput', '');
+
+      const expContainer = document.getElementById('experienceContainer');
+      if (expContainer) expContainer.innerHTML = '';
+      const eduContainer = document.getElementById('educationContainer');
+      if (eduContainer) eduContainer.innerHTML = '';
+
+      removePhoto();
+      showToast('Form reset', 'fa-rotate-right', 'warning');
+    }
+
+    function switchMobileTab(tab) {
+      const ed = document.getElementById('editor-panel');
+      const prev = document.getElementById('preview-panel');
+      const btnEditor = document.getElementById('tab-editor-btn');
+      const btnPreview = document.getElementById('tab-preview-btn');
+
+      if (!ed || !prev || !btnEditor || !btnPreview) return;
+
+      if (tab === 'editor') {
+        ed.classList.remove('hidden');
+        prev.classList.add('hidden');
+        
+        btnEditor.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-slate-800 text-white shadow-sm transition-all duration-200 cursor-pointer";
+        btnPreview.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-300/50 transition-all duration-200 cursor-pointer";
+      } else {
+        ed.classList.add('hidden');
+        prev.classList.remove('hidden');
+        
+        btnPreview.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-slate-800 text-white shadow-sm transition-all duration-200 cursor-pointer";
+        btnEditor.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-300/50 transition-all duration-200 cursor-pointer";
+      }
+    }
+
+    function printCV() {
+      window.print();
+    }
+
+    function downloadPDF() {
+      showToast('Generating high-res PDF document...', 'fa-file-pdf', 'success');
+      const element = document.getElementById('cv-preview-card');
+      if (!element) return;
+      const rawName = getVal('fullNameInput', 'CV');
+      const cleanName = rawName.replace(/[^a-zA-Z0-9]/g, '_');
+
+      // Create temporary off-screen clone at top:0 left:0 to prevent canvas/scroll offsets
+      const clone = element.cloneNode(true);
+      clone.style.margin = '0';
+      clone.style.boxShadow = 'none';
+      clone.style.borderRadius = '0';
+      
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'fixed';
+      tempContainer.style.top = '0';
+      tempContainer.style.left = '0';
+      tempContainer.style.width = '210mm';
+      tempContainer.style.zIndex = '-99999';
+      tempContainer.style.overflow = 'hidden';
+      tempContainer.appendChild(clone);
+      document.body.appendChild(tempContainer);
+
+      const opt = {
+        margin: 0,
+        filename: `${cleanName}_CV.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2, 
+          useCORS: true, 
+          logging: false,
+          scrollY: 0,
+          scrollX: 0
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(clone).save().then(() => {
+        if (document.body.contains(tempContainer)) {
+          document.body.removeChild(tempContainer);
+        }
+      }).catch(err => {
+        console.error('PDF export error:', err);
+        if (document.body.contains(tempContainer)) {
+          document.body.removeChild(tempContainer);
+        }
+      });
+    }
+
+    function logoutStaff() {
+      const appView = document.getElementById('app-view');
+      const loginView = document.getElementById('login-view');
+      if (appView) appView.classList.add('hidden');
+      if (loginView) loginView.classList.remove('hidden');
+      showToast('Signed out from workspace', 'fa-power-off', 'info');
+    }
+
+    function showToast(msg, icon = 'fa-check', type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = `p-3 rounded-xl bg-slate-900/90 text-white border border-slate-700 shadow-xl text-xs flex items-center gap-2 pointer-events-auto transition-all animate-slide-down`;
+      toast.innerHTML = `<i class="fa-solid ${icon} text-blue-400"></i> ${msg}`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
+    }
+  </script>
+</body>
+</html>
