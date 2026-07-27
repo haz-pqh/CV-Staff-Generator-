@@ -391,6 +391,21 @@
     </div>
   </div>
 
+  <!-- Auth / Login Loading Transition Screen -->
+  <div id="login-loading-view" class="hidden fixed inset-0 z-[180] bg-slate-950 flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-sm p-6 rounded-2xl border border-indigo-500/30 text-center animate-scale-in">
+      <div class="relative w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin"></div>
+        <i class="fa-solid fa-shield-halved text-2xl text-indigo-400"></i>
+      </div>
+      <h3 class="text-base font-extrabold text-white mb-1">Authenticating Staff...</h3>
+      <p id="authStatusText" class="text-[11px] text-slate-400 font-mono mb-4">Verifying security token...</p>
+      <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden p-0.5 border border-slate-800">
+        <div id="authProgressBar" class="bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-400 h-full rounded-full transition-all duration-300 w-0"></div>
+      </div>
+    </div>
+  </div>
+
   <div id="app-view" class="hidden min-h-screen flex flex-col bg-slate-100 animate-fade-in-up">
     
     <!-- Top Navigation Header -->
@@ -972,13 +987,42 @@
       if (errBox) errBox.classList.add('hidden');
 
       const loginView = document.getElementById('login-view');
+      const loadingView = document.getElementById('login-loading-view');
       const appView = document.getElementById('app-view');
-      if (loginView) loginView.classList.add('hidden');
-      if (appView) appView.classList.remove('hidden');
+      const authProgressBar = document.getElementById('authProgressBar');
+      const authStatusText = document.getElementById('authStatusText');
 
-      // Load profile into CV Workspace
-      loadStaffProfileData(email);
-      showToast('Identity authenticated successfully', 'fa-shield-check', 'success');
+      // Hide login form and trigger loading animation transition
+      if (loginView) loginView.classList.add('hidden');
+      if (loadingView) loadingView.classList.remove('hidden');
+
+      const steps = [
+        { progress: '35%', text: 'Verifying security token...' },
+        { progress: '70%', text: 'Decrypting staff profile record...' },
+        { progress: '100%', text: 'Loading CV Workspace...' }
+      ];
+
+      let stepIdx = 0;
+      if (authProgressBar) authProgressBar.style.width = '15%';
+      if (authStatusText) authStatusText.innerText = steps[0].text;
+
+      const authInterval = setInterval(() => {
+        stepIdx++;
+        if (stepIdx < steps.length) {
+          if (authProgressBar) authProgressBar.style.width = steps[stepIdx].progress;
+          if (authStatusText) authStatusText.innerText = steps[stepIdx].text;
+        } else {
+          clearInterval(authInterval);
+          setTimeout(() => {
+            if (loadingView) loadingView.classList.add('hidden');
+            if (appView) appView.classList.remove('hidden');
+
+            // Load profile into CV Workspace
+            loadStaffProfileData(email);
+            showToast('Identity authenticated successfully', 'fa-shield-check', 'success');
+          }, 350);
+        }
+      }, 350);
     }
 
     function loadStaffProfileData(email) {
@@ -1017,42 +1061,6 @@
 
     function loadHazrilDemo() {
       loadStaffProfileData('hazril.hassan@enterprise.com');
-    }
-
-    function handleLogin(e) {
-      e.preventDefault();
-      const loginView = document.getElementById('login-view');
-      const appView = document.getElementById('app-view');
-      if (loginView) loginView.classList.add('hidden');
-      if (appView) appView.classList.remove('hidden');
-      loadHazrilDemo();
-      showToast('Authenticated into workspace', 'fa-right-to-bracket', 'success');
-    }
-
-    function loadHazrilDemo() {
-      const p = defaultProfileHazril;
-      currentPhotoUrl = p.photoUrl;
-
-      setVal('fullNameInput', p.fullName);
-      setVal('jobTitleInput', p.jobTitle);
-      setVal('phoneInput', p.phone);
-      setVal('emailInput', p.email);
-      setVal('locationInput', p.location);
-      setVal('skillsInput', p.skills);
-      setVal('languagesInput', p.languages);
-      setVal('summaryInput', p.summary);
-
-      const expContainer = document.getElementById('experienceContainer');
-      if (expContainer) expContainer.innerHTML = '';
-      const eduContainer = document.getElementById('educationContainer');
-      if (eduContainer) eduContainer.innerHTML = '';
-
-      p.experiences.forEach(exp => addExperienceField(exp));
-      p.education.forEach(edu => addEducationField(edu));
-
-      updateThemeColor(p.themeColor);
-      updatePhotoPreview();
-      updateLiveCV();
     }
 
     function updateThemeColor(hex) {
