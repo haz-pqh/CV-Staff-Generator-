@@ -237,8 +237,8 @@
   <div id="intro-welcome-view" class="fixed inset-0 z-[250] bg-slate-950 flex items-center justify-center p-4 sm:p-6 overflow-hidden transition-opacity duration-500">
     <canvas id="introParticlesCanvas" class="absolute inset-0 w-full h-full pointer-events-auto z-0"></canvas>
     
-    <div class="relative z-10 glass-card w-full max-w-md p-6 sm:p-8 rounded-3xl border border-indigo-500/30 shadow-2xl text-center animate-scale-in">
-      <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+    <div class="relative z-10 glass-card w-full max-w-md p-6 sm:p-8 rounded-3xl border border-indigo-500/30 shadow-2xl text-center animate-scale-in overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-t-3xl"></div>
 
       <div class="w-16 h-16 bg-gradient-to-tr from-blue-600 via-indigo-600 to-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/30 ring-4 ring-indigo-500/20">
         <i class="fa-solid fa-id-card text-2xl text-white"></i>
@@ -277,7 +277,7 @@
     <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-slate-600/30 rounded-full blur-[120px] pointer-events-none ambient-blob-2"></div>
 
     <div class="glass-card w-full max-w-sm my-auto rounded-2xl shadow-2xl border border-slate-800 overflow-hidden relative z-10 animate-fade-in-up hover-lift max-h-[98vh] overflow-y-auto no-scrollbar">
-      <div class="h-1 w-full bg-gradient-to-r from-slate-700 via-blue-600 to-indigo-600"></div>
+      <div class="h-1 w-full bg-gradient-to-r from-slate-700 via-blue-600 to-indigo-600 rounded-t-2xl"></div>
 
       <div class="p-4 sm:p-5 pb-1 text-center">
         <div class="w-10 h-10 bg-gradient-to-tr from-slate-800 via-slate-700 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-md text-white">
@@ -393,7 +393,7 @@
 
   <!-- Auth / Login Loading Transition Screen -->
   <div id="login-loading-view" class="hidden fixed inset-0 z-[180] bg-slate-950 flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-sm p-6 rounded-2xl border border-indigo-500/30 text-center animate-scale-in">
+    <div class="glass-card w-full max-w-sm p-6 rounded-2xl border border-indigo-500/30 text-center animate-scale-in overflow-hidden">
       <div class="relative w-16 h-16 mx-auto mb-4 flex items-center justify-center">
         <div class="absolute inset-0 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin"></div>
         <i class="fa-solid fa-shield-halved text-2xl text-indigo-400"></i>
